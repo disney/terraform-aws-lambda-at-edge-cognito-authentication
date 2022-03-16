@@ -69,15 +69,15 @@ terraform state rm 'module.<my_module_name>.aws_lambda_function.cloudfront_auth_
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 3.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_archive"></a> [archive](#provider\_archive) | n/a |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 3.0 |
-| <a name="provider_null"></a> [null](#provider\_null) | n/a |
+| <a name="provider_archive"></a> [archive](#provider\_archive) | 2.2.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.57.0 |
+| <a name="provider_null"></a> [null](#provider\_null) | 3.1.0 |
 
 ## Modules
 
@@ -116,5 +116,5 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_arn"></a> [arn](#output\_arn) | ARN for the lambda@edge created by this module. |
-| <a name="output_qualified_arn"></a> [qualified\_arn](#output\_qualified\_arn) | Qualified ARN for the lambda@edge created by this module. |
+| <a name="output_arn"></a> [arn](#output\_arn) | ARN for the Lambda@Edge created by this module. |
+| <a name="output_qualified_arn"></a> [qualified\_arn](#output\_qualified\_arn) | Qualified ARN for the Lambda@Edge created by this module. |
