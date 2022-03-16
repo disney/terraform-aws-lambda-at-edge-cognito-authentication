@@ -1,0 +1,12 @@
+version: 2
+
+updates:
+  - package-ecosystem: "npm"
+    directory: "/files/deployable"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "terraform"
+    directory: "/"
+    schedule:
+      interval: "weekly"
