@@ -1,4 +1,4 @@
-# tf-mod-lambda-edge-cognito-authentication
+# terraform-aws-lambda-at-edge-cognito-authentication
 This terraform module creates a Lambda@Edge Lambda to be used within a viewer policy of a CloudFront Distribution to
 enforce Cognito Authentication through a configured Cognito User Pool.
 
