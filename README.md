@@ -26,7 +26,7 @@ resource "aws_cognito_user_pool_client" "cognito_client" {
 }
 
 module "cloudfront_cognito_auth_lambda" {
-  source    = "git::https://github.com/disneySRE/lambda-edge-cognito-authentication.git?ref=<version-ref>"
+  source    = "git::https://github.com/disney/terraform-aws-lambda-at-edge-cognito-authentication.git?ref=<version-ref>"
   name                                      = "my-application"
   cognito_user_pool_name                    = data.aws_cognito_user_pools.user_pool.name
   cognito_user_pool_region                  = "us-east-1"

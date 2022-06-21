@@ -74,7 +74,7 @@ to your fork, and reference them within your Terraform Deployment like so:
 
 ```
 module "cognito_auth" {
-  source = "git::https://github.com/<my fork>/lambda-edge-cognito-authentication.git?ref=<my_version_ref>"
+  source = "git::https://github.com/<my fork>/terraform-aws-lambda-at-edge-cognito-authentication.git?ref=<my_version_ref>"
  
   name                                      = "my_foo_app""
   cognito_user_pool_name                    = data.aws_cognito_user_pools.my_user_pool.name
