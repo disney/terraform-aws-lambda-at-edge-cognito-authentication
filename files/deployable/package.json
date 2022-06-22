@@ -9,11 +9,11 @@
   "author": "Ken Figueiredo",
   "license": "TOST",
   "devDependencies": {
-    "aws-sdk": "2.1094.0"
+    "aws-sdk": "2.1159.0"
   },
   "dependencies": {
-    "axios": "0.26.1",
-    "cognito-at-edge": "1.2.1",
+    "axios": "0.27.2",
+    "cognito-at-edge": "1.2.2",
     "node-cache": "5.1.2",
     "pino": "7.8.1"
   }
