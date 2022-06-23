@@ -9,7 +9,7 @@
   "author": "Ken Figueiredo",
   "license": "TOST",
   "devDependencies": {
-    "aws-sdk": "2.1159.0"
+    "aws-sdk": "2.1160.0"
   },
   "dependencies": {
     "axios": "0.27.2",
