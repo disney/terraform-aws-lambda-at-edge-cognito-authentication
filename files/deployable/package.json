@@ -12,7 +12,7 @@
     "aws-sdk": "2.1159.0"
   },
   "dependencies": {
-    "axios": "0.27.2",
+    "axios": "1.2.1",
     "cognito-at-edge": "1.2.2",
     "node-cache": "5.1.2",
     "pino": "7.8.1"
