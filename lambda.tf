@@ -5,7 +5,7 @@ locals {
 
 resource "null_resource" "install_lambda_dependencies" {
   provisioner "local-exec" {
-    command     = "npm ci --production"
+    command     = "npm ci --omit dev"
     working_dir = abspath("${path.module}/files/deployable")
   }
 

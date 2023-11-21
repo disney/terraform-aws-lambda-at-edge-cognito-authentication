@@ -4,8 +4,15 @@ variable "name" {
 }
 
 variable "cognito_user_pool_name" {
-  description = "Name of the Cognito User Pool to utilize."
+  description = "Name of the Cognito User Pool to utilize. Required if 'cognito_user_pool_domain' is not set."
   type        = string
+  default     = ""
+}
+
+variable "cognito_user_pool_domain" {
+  description = "Optional: Full Domain of the Cognito User Pool to utilize. Mutually exclusive with 'cognito_user_pool_name'."
+  type        = string
+  default     = ""
 }
 
 variable "cognito_user_pool_region" {

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.0] - TBD
 
+### Added
+- Added support for Cognito custom user pool domains.
+
 ### Changed
 - Update Lambda@Edge NodeJS version to `nodejs20.x` (was `nodejs14.x`).
 - Remove `aws-sdk` in favor of `@aws-sdk` v3 libraries.

@@ -4,7 +4,7 @@ locals {
     userPoolId           = var.cognito_user_pool_id
     userPoolAppId        = var.cognito_user_pool_app_client_id
     userPoolAppSecret    = var.cognito_user_pool_app_client_secret == null ? "" : var.cognito_user_pool_app_client_secret
-    userPoolDomain       = "${var.cognito_user_pool_name}.auth.${var.cognito_user_pool_region}.amazoncognito.com"
+    userPoolDomain       = coalesce(var.cognito_user_pool_domain, "${var.cognito_user_pool_name}.auth.${var.cognito_user_pool_region}.amazoncognito.com")
     cookieExpirationDays = var.cognito_cookie_expiration_days
     disableCookieDomain  = var.cognito_disable_cookie_domain
     logLevel             = var.cognito_log_level
