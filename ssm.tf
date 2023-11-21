@@ -8,6 +8,7 @@ locals {
     cookieExpirationDays = var.cognito_cookie_expiration_days
     disableCookieDomain  = var.cognito_disable_cookie_domain
     logLevel             = var.cognito_log_level
+    redirectPath         = var.cognito_redirect_path
   }, var.cognito_additional_settings)
 }
 

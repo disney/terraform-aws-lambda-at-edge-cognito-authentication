@@ -7,13 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - TBD
 
 ### Added
-- Added support for Cognito custom user pool domains.
-- Added support for additional cognito@edge settings via `cognito_additional_settings`.
+- Added support for Cognito custom user pool domains via new variable `cognito_user_pool_domain`.
+- Added support for custom redirect endpoint for Cognito@Edge via new variable `cognito_redirect_path`.
+- Added support for additional Cognito@Edge settings via new variable `cognito_additional_settings`.
 
 ### Changed
-- Update Lambda@Edge NodeJS version to `nodejs20.x` (was `nodejs14.x`).
+- Expand TF AWS provider range to allow support for `5.0.0` and greater.
+- Update Lambda@Edge NodeJS version to `nodejs20.x` (was `nodejs14.x`) and make it user configurable via new variable `lambda_runtime`.
+- Lambda@Edge lambda zip is now bundled via `esbuild` to reduce package size.
+- Change default lambda timeout to `5` seconds (was `3` seconds) and make it user configurable via new variable `lambda_timeout`.
 - Remove `aws-sdk` in favor of `@aws-sdk` v3 libraries.
-- Expand TF AWS provider range to allow `5.0.0` and greater support.
 
 ## [1.0.1] - 2022-06-22
 
