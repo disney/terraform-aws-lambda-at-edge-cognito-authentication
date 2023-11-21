@@ -60,6 +60,12 @@ variable "cognito_log_level" {
   }
 }
 
+variable "cognito_additional_settings" {
+  description = "Map of any to configure any additional cognito@edge parameters not handled by this module."
+  type        = map(any)
+  default     = {}
+}
+
 variable "tags" {
   description = "Map of tags to attach to all AWS resources created by this module."
   type        = map(string)

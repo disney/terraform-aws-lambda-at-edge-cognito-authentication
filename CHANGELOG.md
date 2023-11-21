@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added support for Cognito custom user pool domains.
+- Added support for additional cognito@edge settings via `cognito_additional_settings`.
 
 ### Changed
 - Update Lambda@Edge NodeJS version to `nodejs20.x` (was `nodejs14.x`).

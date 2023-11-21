@@ -1,5 +1,5 @@
 locals {
-  lambda_configuration = {
+  lambda_configuration = merge({
     region               = var.cognito_user_pool_region
     userPoolId           = var.cognito_user_pool_id
     userPoolAppId        = var.cognito_user_pool_app_client_id
@@ -8,7 +8,7 @@ locals {
     cookieExpirationDays = var.cognito_cookie_expiration_days
     disableCookieDomain  = var.cognito_disable_cookie_domain
     logLevel             = var.cognito_log_level
-  }
+  }, var.cognito_additional_settings)
 }
 
 resource "aws_kms_key" "ssm_kms_key" {
