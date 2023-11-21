@@ -27,7 +27,7 @@ resource "aws_lambda_function" "cloudfront_auth_edge" {
   function_name = "${var.name}-edge-auth"
   role          = aws_iam_role.lambda_at_edge.arn
   filename      = data.archive_file.lambda_edge_bundle.output_path
-  runtime       = "nodejs14.x"
+  runtime       = "nodejs20.x"
   handler       = "index.handler"
   tags          = var.tags
 

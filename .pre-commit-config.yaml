@@ -1,0 +1,22 @@
+.common_tf_docs_config: &common_tf_docs_config
+  --hook-config=--add-to-existing-file=true
+  --hook-config=--create-file-if-not-exist=true
+
+.common_tf_docs_readme_file: &common_tf_docs_readme_file
+  --hook-config=--path-to-file=README.md
+
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.76.0
+    hooks:
+      - id: terraform_fmt
+        args:
+          - --args=-recursive
+
+      - id: terraform_docs
+        files: '^.*.tf$'
+        args:
+          - *common_tf_docs_readme_file
+          - *common_tf_docs_config
+          - --hook-config=--config=data-io/modules/data-io-regional/.terraform-docs.yml
+

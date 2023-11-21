@@ -1,4 +1,7 @@
-const { STS, IAM, SSM } = require('aws-sdk');
+const { IAM } = require('@aws-sdk/client-iam');
+const { SSM } = require('@aws-sdk/client-ssm');
+const { STS } = require('@aws-sdk/client-sts');
+
 const NodeCache = require("node-cache");
 const { Authenticator } = require('cognito-at-edge');
 
@@ -54,14 +57,14 @@ async function createAuthenticatorFromConfiguration() {
 
     // Get the IAM role that is currently running this lambda.
     rootLogger.info('Attempting to get current execution IAM Role.');
-    const curIdentity = await stsClient.getCallerIdentity().promise();
+    const curIdentity = await stsClient.getCallerIdentity();
     const iamRole = curIdentity.Arn;
     rootLogger.info(`Running as IAM Role[${iamRole}].`);
     const iamRoleName = getRoleNameFromExecutionARN(iamRole, 'role')
 
     // Get the predefined policy which references the SSM Parameter we need to pull
     rootLogger.info(`Fetching Policy[${POLICY_NAME}] from IAM Role[${iamRole}].`);
-    const { PolicyDocument } = await iamClient.getRolePolicy({ PolicyName: POLICY_NAME, RoleName: iamRoleName }).promise();
+    const { PolicyDocument } = await iamClient.getRolePolicy({ PolicyName: POLICY_NAME, RoleName: iamRoleName });
     rootLogger.info('Successfully fetched Policy document.');
 
     const parsedPolicyDoc = decodeURIComponent(PolicyDocument);
@@ -72,7 +75,7 @@ async function createAuthenticatorFromConfiguration() {
     
     // Fetch the data from parameter store
     rootLogger.info(`Fetching Parameter[${ssmParameterName}].`);
-    const { Parameter } = await ssmClient.getParameter({ Name: ssmParameterName, WithDecryption: true }).promise();
+    const { Parameter } = await ssmClient.getParameter({ Name: ssmParameterName, WithDecryption: true });
     rootLogger.info(`Successfully fetched Parameter[${ssmParameterName}].`);
 
     const authConfig = JSON.parse(Parameter.Value);
