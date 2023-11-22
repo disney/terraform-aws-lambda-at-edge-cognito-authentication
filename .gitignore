@@ -3,4 +3,6 @@
 .idea
 *.zip
 .vscode
-dist
+
+# Ignore all bundled JS files
+files/deployable/dist/*.js

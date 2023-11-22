@@ -1,5 +1,5 @@
 locals {
-  tracked_files    = concat(tolist(fileset("${path.module}/files/deployable/", "*.{js,json}")), tolist(fileset("${path.module}/files/deployable/", "patches/*.patch")))
+  tracked_files    = setunion(fileset("${path.module}/files/deployable/", "*.{js,json}"), fileset("${path.module}/files/deployable/", "patches/*.patch"))
   tracked_file_sha = sha256(join(",", [for file in local.tracked_files : filesha256("${path.module}/files/deployable/${file}")]))
 }
 
@@ -21,6 +21,7 @@ data "archive_file" "lambda_edge_bundle" {
   source_dir       = "${path.module}/files/deployable/dist"
   output_path      = "${path.module}/files/${local.tracked_file_sha}.zip"
   output_file_mode = "0666"
+  excludes         = [".gitkeep"]
 }
 
 resource "aws_lambda_function" "cloudfront_auth_edge" {
@@ -32,6 +33,8 @@ resource "aws_lambda_function" "cloudfront_auth_edge" {
   timeout       = var.lambda_timeout
   tags          = var.tags
   publish       = true
+
+  skip_destroy = true
 }
 
 
