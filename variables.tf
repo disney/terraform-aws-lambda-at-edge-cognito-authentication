@@ -1,11 +1,48 @@
+# ================================================================================================================
+# General Configurations
+# ================================================================================================================
+
 variable "name" {
   description = "Name to prefix on all infrastructure created by this module."
   type        = string
 }
 
-variable "cognito_user_pool_name" {
-  description = "Name of the Cognito User Pool to utilize."
+variable "tags" {
+  description = "Map of tags to attach to all AWS resources created by this module."
+  type        = map(string)
+  default     = {}
+}
+
+# ================================================================================================================
+# Lambda Configurations
+# ================================================================================================================
+
+variable "lambda_runtime" {
+  description = "Lambda runtime to utilize for Lambda@Edge."
   type        = string
+  default     = "nodejs20.x"
+}
+
+variable "lambda_timeout" {
+  description = "Amount of timeout in seconds to set on for Lambda@Edge."
+  type        = number
+  default     = 5
+}
+
+# ================================================================================================================
+# Cognito @ Edge Configurations
+# ================================================================================================================
+
+variable "cognito_user_pool_name" {
+  description = "Name of the Cognito User Pool to utilize. Required if 'cognito_user_pool_domain' is not set."
+  type        = string
+  default     = ""
+}
+
+variable "cognito_user_pool_domain" {
+  description = "Optional: Full Domain of the Cognito User Pool to utilize. Mutually exclusive with 'cognito_user_pool_name'."
+  type        = string
+  default     = ""
 }
 
 variable "cognito_user_pool_region" {
@@ -53,8 +90,15 @@ variable "cognito_log_level" {
   }
 }
 
-variable "tags" {
-  description = "Map of tags to attach to all AWS resources created by this module."
-  type        = map(string)
+variable "cognito_redirect_path" {
+  description = "Optional path to redirect to after a successful cognito login."
+  type        = string
+  default     = ""
+}
+
+variable "cognito_additional_settings" {
+  description = "Map of any to configure any additional cognito@edge parameters not handled by this module."
+  type        = any
   default     = {}
 }
+

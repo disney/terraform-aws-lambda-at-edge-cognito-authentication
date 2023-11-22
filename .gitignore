@@ -1,3 +1,8 @@
 .terraform.lock.hcl
 .terraform
 .idea
+*.zip
+.vscode
+
+# Ignore all bundled JS files
+files/deployable/dist/*.js

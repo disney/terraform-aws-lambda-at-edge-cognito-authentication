@@ -1,20 +1,24 @@
 {
   "name": "auth_lambda",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Cognito@Edge wrapper to clean up",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "patch-package && esbuild index.js --bundle --platform=node --format=cjs --main-fields=module,main '--external:@aws-sdk/*' --outdir=dist"
   },
   "author": "Ken Figueiredo",
   "license": "TOST",
   "devDependencies": {
-    "aws-sdk": "2.1159.0"
+    "@aws-sdk/client-iam": "3.454.0",
+    "@aws-sdk/client-ssm": "3.454.0",
+    "@aws-sdk/client-sts": "3.454.0",
+    "esbuild": "0.19.7",
+    "patch-package": "8.0.0"
   },
   "dependencies": {
-    "axios": "0.27.2",
-    "cognito-at-edge": "1.3.2",
+    "cognito-at-edge": "1.5.0",
     "node-cache": "5.1.2",
-    "pino": "7.8.1"
+    "pino": "8.16.2"
   }
 }
