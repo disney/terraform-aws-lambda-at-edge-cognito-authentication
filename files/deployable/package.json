@@ -19,6 +19,6 @@
   "dependencies": {
     "cognito-at-edge": "1.5.0",
     "node-cache": "5.1.2",
-    "pino": "8.16.2"
+    "pino": "9.3.1"
   }
 }
