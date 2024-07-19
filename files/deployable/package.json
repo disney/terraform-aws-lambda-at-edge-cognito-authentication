@@ -4,8 +4,7 @@
   "description": "Cognito@Edge wrapper to clean up",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "patch-package && esbuild index.js --bundle --platform=node --format=cjs --main-fields=module,main '--external:@aws-sdk/*' --outdir=dist"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ken Figueiredo",
   "license": "TOST",
@@ -17,8 +16,8 @@
     "patch-package": "8.0.0"
   },
   "dependencies": {
-    "cognito-at-edge": "1.5.0",
+    "cognito-at-edge": "1.5.2",
     "node-cache": "5.1.2",
-    "pino": "8.16.2"
+    "pino": "9.3.1"
   }
 }
