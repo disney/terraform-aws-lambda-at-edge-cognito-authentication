@@ -13,7 +13,7 @@
     "@aws-sdk/client-iam": "3.454.0",
     "@aws-sdk/client-ssm": "3.454.0",
     "@aws-sdk/client-sts": "3.454.0",
-    "esbuild": "0.19.7",
+    "esbuild": "0.23.0",
     "patch-package": "8.0.0"
   },
   "dependencies": {
