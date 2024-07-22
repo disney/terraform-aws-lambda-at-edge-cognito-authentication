@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2024-07-22
+
+### Changed
+- Update runtime dependency `cognito-at-edge` to `v1.5.2` (was `v1.5.0`) which allows deletion of the patch that this project was utilizing.
+- Update `pino` to `v9.3.1` (was `v8.16.2`)
+
 ## [2.0.0] - 2023-11-23
 
 ### Added
