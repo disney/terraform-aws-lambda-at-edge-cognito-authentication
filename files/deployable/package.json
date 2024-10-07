@@ -4,7 +4,7 @@
   "description": "Cognito@Edge wrapper to clean up",
   "main": "index.js",
   "scripts": {
-    "postinstall": "esbuild index.js --bundle --minify --platform=node  --target=node20 --format=cjs --main-fields=module,main '--external:@aws-sdk/*' --outdir=dist"
+    "postinstall": "esbuild index.js --bundle --minify --platform=node  --target=node20 --format=cjs --main-fields=module,main '--external:@aws-sdk/*' --outdir=dist --inject:prefix.js"
   },
   "author": "Ken Figueiredo",
   "license": "TOST",
