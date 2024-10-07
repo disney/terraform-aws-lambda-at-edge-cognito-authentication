@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update `pino` to `v9.4.0` (was `v9.3.1`)
 
 ### Fixed
-- Add mitigation for [ISSUE-86](https://github.com/awslabs/cognito-at-edge/issues/86).
+- Add mitigations for [ISSUE-86](https://github.com/awslabs/cognito-at-edge/issues/86).
 
 ## [2.1.0] - 2024-07-22
 

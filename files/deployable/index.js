@@ -88,6 +88,11 @@ async function createAuthenticatorFromConfiguration() {
       throw new Error('Failed to store authenticator in cache.');
     }
 
+    // Force a JWKS Cache hydrate on startup to speed up subsequent calls
+    rootLogger.info("Hydrating JWKS Cache.")
+    await authenticator.hydrateJwtCache()
+    rootLogger.info("Successfully hydrated")
+
   } catch (err) {
     rootLogger.error('Failed to fetch Authenticator configuration from parameter store!');
     rootLogger.error(err.stack);
