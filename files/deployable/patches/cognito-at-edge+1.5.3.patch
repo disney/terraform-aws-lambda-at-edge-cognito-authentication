@@ -1,31 +1,8 @@
 diff --git a/node_modules/cognito-at-edge/dist/index.js b/node_modules/cognito-at-edge/dist/index.js
-index 8a3d2da..2b73c23 100644
+index 8a3d2da..04a2343 100644
 --- a/node_modules/cognito-at-edge/dist/index.js
 +++ b/node_modules/cognito-at-edge/dist/index.js
-@@ -7,6 +7,7 @@ const pino_1 = require("pino");
- const querystring_1 = require("querystring");
- const cookie_1 = require("./util/cookie");
- const csrf_1 = require("./util/csrf");
-+
- class Authenticator {
-     _region;
-     _userPoolId;
-@@ -26,6 +27,7 @@ class Authenticator {
-     _cookieSettingsOverrides;
-     _logger;
-     _jwtVerifier;
-     constructor(params) {
-         this._verifyParams(params);
-         this._region = params.region;
-@@ -51,6 +53,7 @@ class Authenticator {
-             clientId: params.userPoolAppId,
-             tokenUse: 'id',
-         });
-+
-         this._csrfProtection = params.csrfProtection;
-         this._logoutConfiguration = params.logoutConfiguration;
-         this._parseAuthPath = (params.parseAuthPath || '').replace(/^\//, '');
-@@ -95,6 +98,15 @@ class Authenticator {
+@@ -95,6 +95,15 @@ class Authenticator {
              throw new Error('Expected params.logoutConfiguration.logoutUri to be a valid non-empty string starting with "/"');
          }
      }
