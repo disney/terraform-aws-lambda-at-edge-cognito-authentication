@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2024-10-07
+
+### Changed
+
+- Update runtime dependency `cognito-at-edge` to `v1.5.3` (was `v1.5.2`).
+- Update `pino` to `v9.4.0` (was `v9.3.1`)
+
+### Fixed
+- Add mitigation for [ISSUE-86](https://github.com/awslabs/cognito-at-edge/issues/86).
+
 ## [2.1.0] - 2024-07-22
 
 ### Changed

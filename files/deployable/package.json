@@ -9,15 +9,15 @@
   "author": "Ken Figueiredo",
   "license": "TOST",
   "devDependencies": {
-    "@aws-sdk/client-iam": "3.616.0",
-    "@aws-sdk/client-ssm": "3.616.0",
-    "@aws-sdk/client-sts": "3.616.0",
-    "esbuild": "0.23.0",
+    "@aws-sdk/client-iam": "3.666.0",
+    "@aws-sdk/client-ssm": "3.666.0",
+    "@aws-sdk/client-sts": "3.666.0",
+    "esbuild": "0.24.0",
     "patch-package": "8.0.0"
   },
   "dependencies": {
-    "cognito-at-edge": "1.5.2",
+    "cognito-at-edge": "1.5.3",
     "node-cache": "5.1.2",
-    "pino": "9.3.1"
+    "pino": "9.4.0"
   }
 }
