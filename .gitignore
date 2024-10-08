@@ -7,3 +7,4 @@
 # Ignore all bundled JS files
 files/deployable/dist/*.js
 files/deployable/dist/*.js.map
+*.bak

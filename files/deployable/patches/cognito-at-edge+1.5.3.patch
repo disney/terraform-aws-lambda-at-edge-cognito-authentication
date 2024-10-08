@@ -1,20 +1,193 @@
 diff --git a/node_modules/cognito-at-edge/dist/index.js b/node_modules/cognito-at-edge/dist/index.js
-index 8a3d2da..04a2343 100644
+index 8a3d2da..eb38997 100644
 --- a/node_modules/cognito-at-edge/dist/index.js
 +++ b/node_modules/cognito-at-edge/dist/index.js
-@@ -95,6 +95,15 @@ class Authenticator {
-             throw new Error('Expected params.logoutConfiguration.logoutUri to be a valid non-empty string starting with "/"');
-         }
+@@ -2,7 +2,6 @@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Authenticator = void 0;
+ const aws_jwt_verify_1 = require("aws-jwt-verify");
+-const axios_1 = require("axios");
+ const pino_1 = require("pino");
+ const querystring_1 = require("querystring");
+ const cookie_1 = require("./util/cookie");
+@@ -101,90 +100,72 @@ class Authenticator {
+      * @param  {String} code        Authorization code.
+      * @return {Promise} Authenticated user tokens.
+      */
+-    _fetchTokensFromCode(redirectURI, code) {
++    async _fetchTokensFromCode(redirectURI, code) {
+         const authorization = this._getAuthorization();
+         const request = {
+-            url: `https://${this._userPoolDomain}/oauth2/token`,
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/x-www-form-urlencoded',
+                 ...(authorization && { Authorization: `Basic ${authorization}` }),
+             },
+-            data: (0, querystring_1.stringify)({
++            body: new URLSearchParams({
+                 client_id: this._userPoolAppId,
+                 code: code,
+                 grant_type: 'authorization_code',
+                 redirect_uri: redirectURI,
+-            }),
++            })
+         };
+-        this._logger.debug({
+-            msg: 'Fetching tokens from grant code...',
+-            request,
+-            code,
+-        });
+-        return axios_1.default
+-            .request(request)
+-            .then((resp) => {
+-            this._logger.debug({ msg: 'Fetched tokens', tokens: resp.data });
+-            return {
+-                idToken: resp.data.id_token,
+-                accessToken: resp.data.access_token,
+-                refreshToken: resp.data.refresh_token,
+-            };
+-        })
+-            .catch((err) => {
+-            this._logger.error({
+-                msg: 'Unable to fetch tokens from grant code',
+-                request,
+-                code,
++        this._logger.debug({ msg: 'Fetching tokens from grant code...', request, code });
++        return fetch(`https://${this._userPoolDomain}/oauth2/token`, request)
++            .then((response) => response.json())
++            .then((data) => {
++                this._logger.debug({ msg: 'Fetched tokens', tokens: data });
++                return {
++                    idToken: data.id_token,
++                    accessToken: data.access_token,
++                    refreshToken: data.refresh_token,
++                };
++            }).catch((err) => {
++                this._logger.error({ msg: 'Unable to fetch tokens from grant code', request, code });
++                throw err;
+             });
+-            throw err;
+-        });
      }
 +
-+    /**
-+     * This will explicitly Hydrate the JWKS store as per:
-+     * https://github.com/awslabs/aws-jwt-verify#explicitly-hydrating-the-jwks-cache
-+     */
-+    async hydrateJwtCache() {
-+        await this._jwtVerifier.hydrate();
-+    }
-+
      /**
-      * Exchange authorization code for tokens.
+      * Fetch accessTokens from refreshToken.
       * @param  {String} redirectURI Redirection URI.
+      * @param  {String} refreshToken Refresh token.
+      * @return {Promise<Tokens>} Refreshed user tokens.
+      */
+-    _fetchTokensFromRefreshToken(redirectURI, refreshToken) {
++    async _fetchTokensFromRefreshToken(redirectURI, refreshToken) {
+         const authorization = this._getAuthorization();
+         const request = {
+-            url: `https://${this._userPoolDomain}/oauth2/token`,
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/x-www-form-urlencoded',
+                 ...(authorization && { Authorization: `Basic ${authorization}` }),
+             },
+-            data: (0, querystring_1.stringify)({
++            body: new URLSearchParams({
+                 client_id: this._userPoolAppId,
+                 refresh_token: refreshToken,
+                 grant_type: 'refresh_token',
+                 redirect_uri: redirectURI,
+-            }),
++            })
+         };
+-        this._logger.debug({
+-            msg: 'Fetching tokens from refreshToken...',
+-            request,
+-            refreshToken,
+-        });
+-        return axios_1.default
+-            .request(request)
+-            .then((resp) => {
+-            this._logger.debug({ msg: 'Fetched tokens', tokens: resp.data });
+-            return {
+-                idToken: resp.data.id_token,
+-                accessToken: resp.data.access_token,
+-            };
+-        })
+-            .catch((err) => {
+-            this._logger.error({
+-                msg: 'Unable to fetch tokens from refreshToken',
+-                request,
+-                refreshToken,
++
++        this._logger.debug({ msg: 'Fetching tokens from refreshToken...', request, refreshToken });
++        return fetch(`https://${this._userPoolDomain}/oauth2/token`, request)
++            .then((response) => response.json())
++            .then((data) => {
++                this._logger.debug({ msg: 'Fetched tokens', tokens: data });
++                return {
++                    idToken: data.id_token,
++                    accessToken: data.access_token,
++                };
++            }).catch((err) => {
++                this._logger.error({ msg: 'Unable to fetch tokens from refreshToken', request, refreshToken });
++                throw err;
+             });
+-            throw err;
+-        });
+     }
+     _getAuthorization() {
+         return (this._userPoolAppSecret &&
+@@ -404,39 +385,33 @@ class Authenticator {
+     async _revokeTokens(tokens) {
+         const authorization = this._getAuthorization();
+         const revokeRequest = {
+-            url: `https://${this._userPoolDomain}/oauth2/revoke`,
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/x-www-form-urlencoded',
+                 ...(authorization && { Authorization: `Basic ${authorization}` }),
+             },
+-            data: (0, querystring_1.stringify)({
++            body: new URLSearchParams({
+                 client_id: this._userPoolAppId,
+                 token: tokens.refreshToken,
+-            }),
++            })
+         };
+-        this._logger.debug({
+-            msg: 'Revoking refreshToken...',
+-            request: revokeRequest,
+-            refreshToken: tokens.refreshToken,
+-        });
+-        return axios_1.default
+-            .request(revokeRequest)
+-            .then(() => {
+-            this._logger.debug({
+-                msg: 'Revoked refreshToken',
+-                refreshToken: tokens.refreshToken,
+-            });
+-        })
+-            .catch((err) => {
+-            this._logger.error({
+-                msg: 'Unable to revoke refreshToken',
+-                request: revokeRequest,
+-                err: JSON.stringify(err),
++
++        this._logger.debug({ msg: 'Revoking refreshToken...', request: revokeRequest, refreshToken: tokens.refreshToken });
++        return fetch(`https://${this._userPoolDomain}/oauth2/revoke`, revokeRequest)
++            .then((response) => response.json())
++            .then(({ id_token, access_token, refresh_token }) => {
++                this._logger.debug({ msg: 'Revoked refreshToken', refreshToken: tokens.refreshToken, });
++                return {
++                    idToken: id_token,
++                    accessToken: access_token,
++                    refreshToken: refresh_token,
++                };
++            }).catch((err) => {
++                this._logger.error({ msg: 'Unable to revoke refreshToken', request: revokeRequest, err: JSON.stringify(err), });
++                throw err;
+             });
+-            throw err;
+-        });
+     }
++
+     async _clearCookies(event, tokens = {}) {
+         this._logger.info({ msg: 'Clearing cookies...', event, tokens });
+         const { request } = event.Records[0].cf;
