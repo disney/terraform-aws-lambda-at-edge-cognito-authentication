@@ -7,7 +7,7 @@ enforce Cognito Authentication through a configured Cognito User Pool.
 
 ## Requirements
 - Terraform version >= 1.0.X 
-- NodeJS + NPM (compatible with NodeJS 18.X.X)
+- NodeJS + NPM (compatible with NodeJS 20.X.X)
   - Used for `npm ci` dependency installation for Lambda@Edge Bundle.
 - Terraform AWS Provider in `us-east-1`
   - Requirement for CloudFront + Lambda@Edge runtime.
@@ -53,6 +53,11 @@ resource "aws_cloudfront_distribution" "my_cloudfront_distribution" {
 }
 
 ```
+### Cloudwatch logging
+If a Lambda@Edge function has IAM permission to `logs:CreateLogGroup` then it will create a Cloudwatch log group called `/aws/lambda/us-east-1.<lambda-name>` in every CloudFront region that serves a request, which can result in logging proliferating across many regions, as described in https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/edge-functions-logs.html#lambda-at-edge-logs .  This auto-created log group has no retention policy set, so in addition to Cloudwatch ingest costs, Cloudwatch storage costs increase over time for the life of the function.  Setting `cloudwatch_enable_log_group_create = false` will mean that the IAM policies in the module will not grant `logs:CreateLogGroup` to the edge-auth Lambda@Edge function, and if the log group does not exit, no logging happens (so no Cloudwatch ingest or storage costs).  Notes:
+- If the variable is `false` and logging is required in a specific region, the caller is responsible for ensuring the log group exists in that region.
+- Retroactively setting the variable to `false` is not sufficient to disable logging if the log group already exists in a region - manual deletion of the unwanted log groups will be required to prevent further logging.
+- If a policy outside the module grants the edge-auth function rights to `logs:CreateLogGroup`, then Lambda@Edge will still create the log group and log.
 
 ### Lambda@Edge Destroy Issue
 Note that if a destroy action is performed on this terraform module, terraform is unable to delete the Lambda@Edge that was published as a part of this infrastructure (This is noted by this [issue](https://github.com/hashicorp/terraform-provider-aws/issues/1721) on the Terraform provider). It will only be removed from the terraform state as the `skip_destroy` flag is set to true.
@@ -106,6 +111,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_cloudwatch_enable_log_group_create"></a> [cloudwatch\_enable\_log\_group\_create](#input\_cloudwatch\_enable\_log\_group\_create) | Allow Lambda@Edge to create log groups in cloudwatch, defaults to true. | `bool` | `true` | no |
 | <a name="input_cognito_additional_settings"></a> [cognito\_additional\_settings](#input\_cognito\_additional\_settings) | Map of any to configure any additional cognito@edge parameters not handled by this module. | `any` | `{}` | no |
 | <a name="input_cognito_cookie_expiration_days"></a> [cognito\_cookie\_expiration\_days](#input\_cognito\_cookie\_expiration\_days) | Number of days to keep the cognito cookie valid. | `number` | `7` | no |
 | <a name="input_cognito_disable_cookie_domain"></a> [cognito\_disable\_cookie\_domain](#input\_cognito\_disable\_cookie\_domain) | Sets domain attribute in cookies, defaults to false. | `bool` | `false` | no |
@@ -127,5 +133,6 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_arn"></a> [arn](#output\_arn) | ARN for the Lambda@Edge created by this module. |
+| <a name="output_name"></a> [name](#output\_name) | Name of the Lambda@Edge created by this module. |
 | <a name="output_qualified_arn"></a> [qualified\_arn](#output\_qualified\_arn) | Qualified ARN for the Lambda@Edge created by this module. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
