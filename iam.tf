@@ -35,8 +35,15 @@ resource "aws_iam_role_policy" "allow_cloudwatch_logs" {
 
 data "aws_iam_policy_document" "allow_cloudwatch_logs" {
   statement {
-    actions   = ["logs:CreateLogStream", "logs:PutLogEvents", "logs:CreateLogGroup"]
+    actions   = ["logs:CreateLogStream", "logs:PutLogEvents"]
     resources = ["*"]
+  }
+  dynamic "statement" {
+    for_each = var.cloudwatch_enable_log_group_create ? [1] : []
+    content {
+      actions   = ["logs:CreateLogGroup"]
+      resources = ["*"]
+    }
   }
 }
 
