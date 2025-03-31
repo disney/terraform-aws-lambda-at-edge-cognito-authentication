@@ -142,6 +142,6 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_arn"></a> [arn](#output\_arn) | ARN for the Lambda@Edge created by this module. |
-| <a name="output_name"></a> [name](#output\_name) | Name of the Lambda@Edge created by this module. |
+| <a name="output_function_name"></a> [name](#output\_function\_name) | Name of the Lambda@Edge created by this module. |
 | <a name="output_qualified_arn"></a> [qualified\_arn](#output\_qualified\_arn) | Qualified ARN for the Lambda@Edge created by this module. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

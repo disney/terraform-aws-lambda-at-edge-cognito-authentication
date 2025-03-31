@@ -3,7 +3,6 @@ const { SSMClient, GetParameterCommand } = require('@aws-sdk/client-ssm');
 const { STSClient, GetCallerIdentityCommand } = require('@aws-sdk/client-sts');
 
 const fs = require('fs');
-// Check if the file exists
 const configFile = './config.json';
 
 const NodeCache = require("node-cache");
