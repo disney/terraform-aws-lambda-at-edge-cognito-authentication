@@ -14,6 +14,16 @@ variable "tags" {
 }
 
 # ================================================================================================================
+# Cloudwatch Configurations
+# ================================================================================================================
+
+variable "cloudwatch_enable_log_group_create" {
+  description = "Allow Lambda@Edge to create log groups in cloudwatch, defaults to true."
+  type        = bool
+  default     = true
+}
+
+# ================================================================================================================
 # Lambda Configurations
 # ================================================================================================================
 
@@ -27,6 +37,12 @@ variable "lambda_timeout" {
   description = "Amount of timeout in seconds to set on for Lambda@Edge."
   type        = number
   default     = 5
+}
+
+variable "lambda_ship_config" {
+  description = "Whether to ship the config in the lambda package, or use SSM"
+  type        = bool
+  default     = false
 }
 
 # ================================================================================================================
