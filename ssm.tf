@@ -13,6 +13,7 @@ locals {
 }
 
 resource "aws_kms_key" "ssm_kms_key" {
+  count                   = var.lambda_ship_config ? 0 : 1
   description             = "KMS Encryption key for ${var.name} lambda-edge auth"
   deletion_window_in_days = 7
   tags                    = var.tags
@@ -20,10 +21,17 @@ resource "aws_kms_key" "ssm_kms_key" {
 }
 
 resource "aws_ssm_parameter" "lambda_configuration_parameters" {
+  count       = var.lambda_ship_config ? 0 : 1
   name        = "/${var.name}/lambda/edge/configuration"
   description = "Lambda@Edge Configuration for Application[${var.name}]"
   type        = "SecureString"
-  key_id      = aws_kms_key.ssm_kms_key.key_id
+  key_id      = aws_kms_key.ssm_kms_key[0].key_id
   value       = jsonencode(local.lambda_configuration)
   tags        = var.tags
+}
+
+resource "local_file" "lambda_configuration" {
+  count    = var.lambda_ship_config ? 1 : 0
+  filename = "${path.module}/files/deployable/dist/${local.lambda_config_file}"
+  content  = jsonencode(local.lambda_configuration)
 }

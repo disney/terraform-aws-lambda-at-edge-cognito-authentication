@@ -64,6 +64,12 @@ Note that if a destroy action is performed on this terraform module, terraform i
 
 In order to properly delete this resource, it should be manually cleaned up, [instructions here](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-edge-delete-replicas.html).
 
+### Config shipping
+As noted in [141](https://github.com/disney/terraform-aws-lambda-at-edge-cognito-authentication/issues/141), in regions far remote from `us-east-1`, the edge-auth lambda regularly throws 503's caused by initialisation taking longer than 5 seconds.  The variable `lambda_ship_config` will cause the config for the lambda to be written out as a local file `config.json` that is packaged and shipped with the lambda code.  This has some pros:
+- it significantly reduces the number of round trips required between the edge region and `us-east-1` so lambda initialisation takes a consistent ~1.25s, whereas the default behaviour with the config in SSM can take anywhere from 1.5 to 5+ seconds, which makes the function both more reliable (less 503's) and cheaper.
+and some cons:
+- it means that every config change requires a lambda redeploy - which makes deploys take minutes rather than seconds
+
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -79,6 +85,7 @@ In order to properly delete this resource, it should be manually cleaned up, [in
 |------|---------|
 | <a name="provider_archive"></a> [archive](#provider\_archive) | 2.4.0 |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 5.26.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.5.2 |
 | <a name="provider_null"></a> [null](#provider\_null) | 3.2.2 |
 
 ## Modules
@@ -97,6 +104,7 @@ No modules.
 | [aws_kms_key.ssm_kms_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
 | [aws_lambda_function.cloudfront_auth_edge](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
 | [aws_ssm_parameter.lambda_configuration_parameters](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
+| [local_file.lambda_configuration](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
 | [null_resource.install_lambda_dependencies](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [archive_file.lambda_edge_bundle](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
@@ -124,6 +132,7 @@ No modules.
 | <a name="input_cognito_user_pool_name"></a> [cognito\_user\_pool\_name](#input\_cognito\_user\_pool\_name) | Name of the Cognito User Pool to utilize. Required if 'cognito\_user\_pool\_domain' is not set. | `string` | `""` | no |
 | <a name="input_cognito_user_pool_region"></a> [cognito\_user\_pool\_region](#input\_cognito\_user\_pool\_region) | AWS region where the cognito user pool was created. | `string` | `"us-west-2"` | no |
 | <a name="input_lambda_runtime"></a> [lambda\_runtime](#input\_lambda\_runtime) | Lambda runtime to utilize for Lambda@Edge. | `string` | `"nodejs20.x"` | no |
+| <a name="input_lambda_ship_config"></a> [lambda\_ship\_config](#input\_lambda\_ship\_config) | Whether to ship the config in the lambda package, or use SSM | `bool` | `false` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | Amount of timeout in seconds to set on for Lambda@Edge. | `number` | `5` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name to prefix on all infrastructure created by this module. | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Map of tags to attach to all AWS resources created by this module. | `map(string)` | `{}` | no |
