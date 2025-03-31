@@ -39,6 +39,12 @@ variable "lambda_timeout" {
   default     = 5
 }
 
+variable "lambda_ship_config" {
+  description = "Whether to ship the config in the lambda package, or use SSM"
+  type        = bool
+  default     = false
+}
+
 # ================================================================================================================
 # Cognito @ Edge Configurations
 # ================================================================================================================

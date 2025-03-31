@@ -66,29 +66,37 @@ data "aws_iam_policy_document" "allow_lambda_edge_self_role_read" {
 }
 
 resource "aws_iam_role_policy" "ssm_parameter_permission_for_lambda_auth" {
-  name = "SSM_PARAMETER_PERMISSION_FOR_LAMBDA_AUTH"
-  role = aws_iam_role.lambda_at_edge.id
+  count = var.lambda_ship_config ? 0 : 1
+  name  = "SSM_PARAMETER_PERMISSION_FOR_LAMBDA_AUTH"
+  role  = aws_iam_role.lambda_at_edge.id
 
   policy = data.aws_iam_policy_document.allow_ssm_parameter_permission_for_lambda_auth.json
 }
 
 data "aws_iam_policy_document" "allow_ssm_parameter_permission_for_lambda_auth" {
-  statement {
-    actions   = ["ssm:GetParameter"]
-    resources = [aws_ssm_parameter.lambda_configuration_parameters.arn]
+  dynamic "statement" {
+    for_each = var.lambda_ship_config ? [] : [1]
+    content {
+      actions   = ["ssm:GetParameter"]
+      resources = [aws_ssm_parameter.lambda_configuration_parameters[0].arn]
+    }
   }
 }
 
 resource "aws_iam_role_policy" "ssm_parameter_decrypt" {
-  name = "ssmParameterDecrypt"
-  role = aws_iam_role.lambda_at_edge.id
+  count = var.lambda_ship_config ? 0 : 1
+  name  = "ssmParameterDecrypt"
+  role  = aws_iam_role.lambda_at_edge.id
 
   policy = data.aws_iam_policy_document.allow_ssm_parameter_decrypt.json
 }
 
 data "aws_iam_policy_document" "allow_ssm_parameter_decrypt" {
-  statement {
-    actions   = ["kms:Decrypt"]
-    resources = [aws_kms_key.ssm_kms_key.arn]
+  dynamic "statement" {
+    for_each = var.lambda_ship_config ? [] : [1]
+    content {
+      actions   = ["kms:Decrypt"]
+      resources = [aws_kms_key.ssm_kms_key[0].arn]
+    }
   }
 }
