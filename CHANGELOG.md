@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2025-04-15
+
+### Added
+- [#142](https://github.com/disney/terraform-aws-lambda-at-edge-cognito-authentication/pull/142) Make log group creation optional (simonblake-mp)
+
+### Changed
+- Update runtime dependency `cognito-at-edge` to `v1.5.3` (was `v1.5.2`).
+- Update runtime dependency `pino` to `v9.6.0` (was `v9.3.1`).
+- Update `@aws-sdk` dependencies to `v3.787.0` (was `3.616.0`).
+- Update `esbuild` to `0.25.2` (was `0.23.0`).
+
+### Fixed
+- [#140](https://github.com/disney/terraform-aws-lambda-at-edge-cognito-authentication/issues/140) Fix `esbuild` command to now work on Windows.
+
 ## [2.1.0] - 2024-07-22
 
 ### Changed
