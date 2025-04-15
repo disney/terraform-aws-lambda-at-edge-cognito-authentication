@@ -16,7 +16,7 @@
     "patch-package": "8.0.0"
   },
   "dependencies": {
-    "cognito-at-edge": "1.5.2",
+    "cognito-at-edge": "1.5.3",
     "node-cache": "5.1.2",
     "pino": "9.3.1"
   }
