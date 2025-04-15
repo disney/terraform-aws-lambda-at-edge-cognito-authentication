@@ -7,7 +7,7 @@ jobs:
     name: Terraform Checks
     strategy:
       matrix:
-        os: [ubuntu-24.04, windows-2025]
+        os: [ubuntu-24.04, windows-2025, macos-15]
     runs-on: ${{ matrix.os }}
 
     steps:

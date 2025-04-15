@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update `@aws-sdk` dependencies to `v3.787.0` (was `3.616.0`).
 - Update `esbuild` to `0.25.2` (was `0.23.0`).
 
+### Fixed
+- [#140](https://github.com/disney/terraform-aws-lambda-at-edge-cognito-authentication/issues/140) Fix `esbuild` command to now work on Windows.
+
 ## [2.1.0] - 2024-07-22
 
 ### Changed
