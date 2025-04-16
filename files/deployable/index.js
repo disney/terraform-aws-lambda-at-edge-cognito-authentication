@@ -6,16 +6,21 @@ const NodeCache = require("node-cache");
 const { Authenticator } = require('cognito-at-edge');
 const { getLogger } = require('./logger');
 
+const fs = require('fs');
+
 // Global Static variables
 const cacheAuthenticatorKey = "AUTHENTICATOR_OBJECT";
 const POLICY_NAME = "SSM_PARAMETER_PERMISSION_FOR_LAMBDA_AUTH";
 
 const cache = new NodeCache({
   stdTTL: 300,
-  checkperiod: 150, 
+  checkperiod: 150,
   deleteOnExpire: true,
   useClones: false
 });
+
+// if you change this, also update local.lambda_config_file in /lambda.tf
+const configFile = './config.json';
 
 /**
  * Gets a resource name from a given ARN and resourceType.
@@ -48,39 +53,46 @@ function getRoleNameFromExecutionARN(arn) {
  */
 async function createAuthenticatorFromConfiguration() {
   const rootLogger = getLogger();
+  let authConfig;
 
   try {
-    const ssmClient = new SSMClient({ region: 'us-east-1' });
-    const stsClient = new STSClient({ region: 'us-east-1' });
-    const iamClient = new IAMClient({ region: 'us-east-1' });
+    // check if config.json exists in the local file system
+    if (fs.existsSync(configFile)) {
+      authConfig = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+      rootLogger.info('Successfully read local config.json file.');
+    } else {
+      // fetch the configuration from SSM
+      const ssmClient = new SSMClient({ region: 'us-east-1' });
+      const stsClient = new STSClient({ region: 'us-east-1' });
+      const iamClient = new IAMClient({ region: 'us-east-1' });
 
-    // Get the IAM role that is currently running this lambda.
-    rootLogger.info('Attempting to get current execution IAM Role.');
-    const curIdentity = await stsClient.send(new GetCallerIdentityCommand({}));
-    const iamRole = curIdentity.Arn;
-    rootLogger.info(`Running as IAM Role[${iamRole}].`);
-    const iamRoleName = getRoleNameFromExecutionARN(iamRole, 'role')
+      // Get the IAM role that is currently running this lambda.
+      rootLogger.info('Attempting to get current execution IAM Role.');
+      const curIdentity = await stsClient.send(new GetCallerIdentityCommand({}));
+      const iamRole = curIdentity.Arn;
+      rootLogger.info(`Running as IAM Role[${iamRole}].`);
+      const iamRoleName = getRoleNameFromExecutionARN(iamRole, 'role')
 
-    // Get the predefined policy which references the SSM Parameter we need to pull
-    rootLogger.info(`Fetching Policy[${POLICY_NAME}] from IAM Role[${iamRole}].`);
-    const { PolicyDocument } = await iamClient.send(new GetRolePolicyCommand({ PolicyName: POLICY_NAME, RoleName: iamRoleName }));
-    rootLogger.info('Successfully fetched Policy document.');
+      // Get the predefined policy which references the SSM Parameter we need to pull
+      rootLogger.info(`Fetching Policy[${POLICY_NAME}] from IAM Role[${iamRole}].`);
+      const { PolicyDocument } = await iamClient.send(new GetRolePolicyCommand({ PolicyName: POLICY_NAME, RoleName: iamRoleName }));
+      rootLogger.info('Successfully fetched Policy document.');
 
-    const parsedPolicyDoc = decodeURIComponent(PolicyDocument);
-    const referencedPolicy = JSON.parse(parsedPolicyDoc);
-    const ssmParameterArn = referencedPolicy.Statement[0].Resource;
-    rootLogger.info(`Found SSM Resource[${ssmParameterArn}].`);
-    const ssmParameterName = `/${getResourceNameFromARN(ssmParameterArn, 'parameter')}`;
-    
-    // Fetch the data from parameter store
-    rootLogger.info(`Fetching Parameter[${ssmParameterName}].`);
-    const { Parameter } = await ssmClient.send(new GetParameterCommand({ Name: ssmParameterName, WithDecryption: true }));
-    rootLogger.info(`Successfully fetched Parameter[${ssmParameterName}].`);
+      const parsedPolicyDoc = decodeURIComponent(PolicyDocument);
+      const referencedPolicy = JSON.parse(parsedPolicyDoc);
+      const ssmParameterArn = referencedPolicy.Statement[0].Resource;
+      rootLogger.info(`Found SSM Resource[${ssmParameterArn}].`);
+      const ssmParameterName = `/${getResourceNameFromARN(ssmParameterArn, 'parameter')}`;
 
-    const authConfig = JSON.parse(Parameter.Value);
-    rootLogger.info(`Successfully parsed config.`);
+      // Fetch the data from parameter store
+      rootLogger.info(`Fetching Parameter[${ssmParameterName}].`);
+      const { Parameter } = await ssmClient.send(new GetParameterCommand({ Name: ssmParameterName, WithDecryption: true }));
+      rootLogger.info(`Successfully fetched Parameter[${ssmParameterName}].`);
 
-    // Initialize Authenticator with the config from parameter store
+      authConfig = JSON.parse(Parameter.Value);
+      rootLogger.info(`Successfully parsed config.`);
+    }
+    // Initialize Authenticator with the config from parameter store/local file
     const authenticator = new Authenticator(authConfig);
     if (cache.set(cacheAuthenticatorKey, authenticator)) {
       rootLogger.info('Successfully initialized Authenticator.');

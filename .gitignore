@@ -7,3 +7,9 @@
 # Ignore all bundled JS files
 files/deployable/dist/*.js
 files/deployable/dist/*.js.map
+
+# ignore generated config file
+files/deployable/dist/config.json
+
+# ignore node-modules
+files/deployable/node_modules

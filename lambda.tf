@@ -1,5 +1,10 @@
 locals {
-  tracked_files    = setunion(fileset("${path.module}/files/deployable/", "*.{js,json}"), fileset("${path.module}/files/deployable/", "patches/*.patch"))
+  lambda_config_file = "config.json" # if changed, update configFile in files/deployable/index.js as well
+  tracked_files = setunion(
+    fileset("${path.module}/files/deployable/", "*.{js,json}"),
+    fileset("${path.module}/files/deployable/", "dist/${local.lambda_config_file}"),
+    fileset("${path.module}/files/deployable/", "patches/*.patch")
+  )
   tracked_file_sha = sha256(join(",", [for file in local.tracked_files : filesha256("${path.module}/files/deployable/${file}")]))
 }
 
@@ -15,7 +20,10 @@ resource "null_resource" "install_lambda_dependencies" {
 }
 
 data "archive_file" "lambda_edge_bundle" {
-  depends_on = [null_resource.install_lambda_dependencies]
+  depends_on = [
+    null_resource.install_lambda_dependencies,
+    local_file.lambda_configuration
+  ]
 
   type             = "zip"
   source_dir       = "${path.module}/files/deployable/dist"
