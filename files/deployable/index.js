@@ -6,43 +6,26 @@ const NodeCache = require("node-cache");
 const { Authenticator } = require('cognito-at-edge');
 const { getLogger } = require('./logger');
 
+const fs = require('fs');
+
 // Global Static variables
 const cacheAuthenticatorKey = "AUTHENTICATOR_OBJECT";
 const POLICY_NAME = "SSM_PARAMETER_PERMISSION_FOR_LAMBDA_AUTH";
 
 const cache = new NodeCache({
   stdTTL: 300,
-  checkperiod: 150, 
+  checkperiod: 150,
   deleteOnExpire: true,
   useClones: false
 });
 
-/**
- * Gets a resource name from a given ARN and resourceType.
- * @param {string} arn ARN to parse
- * @param {string} resourceType Resource type to strip from resource name
- * @returns {string} Resource Name
- */
-function getResourceNameFromARN(arn, resourceType) {
-  return arn.split(':').pop().replace(`${resourceType}/`, '');
-}
+// if you change this, also update local.lambda_config_file in /lambda.tf
+const configFile = './config.json';
 
 /**
- * Gets the execution role name from the given ARN.
- * NOTE: This expects a format similar to the following: arn:aws:sts::<accountNumber>:assumed-role/<my lambda execution role name>/<region>.<lambda function name>
- * DEV NOTE: This is using a combination of array manipulations which is less readable but tested to be more performant than regex lookups.
- * @param {string} arn ARN to parse
- * @returns Role Name from execution arn.
- */
-function getRoleNameFromExecutionARN(arn) {
-  return arn.split(':').pop().split('/')[1];
-}
-
-/**
- * Fetches Configuration from SSM by inspecting the IAM Role to this lambda and finding a preset Role Policy.
- * NOTE: This is a bit of a hacky way, but very much inline with approaches I've found in researching this setup.
- * Once AWS has a more defined or documented way to have easily customizable configurations for a Lambda@Edge, we
- * can probably revisit this setup.
+ * terraform writes the name of the SSM parameter into a local config.json file, which is deployed with
+ * this lambda code.  When invoked, this code interrogates the parameter name from the config.json
+ * file, fetches it from SSM in us-east-1, and uses it as the config for cognito-at-edge.
  * @returns {void}
  * @throws {Error} Throws error to cause a 500 if we cannot successful create a new authenticator.
  */
@@ -51,27 +34,12 @@ async function createAuthenticatorFromConfiguration() {
 
   try {
     const ssmClient = new SSMClient({ region: 'us-east-1' });
-    const stsClient = new STSClient({ region: 'us-east-1' });
-    const iamClient = new IAMClient({ region: 'us-east-1' });
 
-    // Get the IAM role that is currently running this lambda.
-    rootLogger.info('Attempting to get current execution IAM Role.');
-    const curIdentity = await stsClient.send(new GetCallerIdentityCommand({}));
-    const iamRole = curIdentity.Arn;
-    rootLogger.info(`Running as IAM Role[${iamRole}].`);
-    const iamRoleName = getRoleNameFromExecutionARN(iamRole, 'role')
+    // interrogates the ${configFile} file for the name of the SSM parameter
+    const lambdaConfig = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+    rootLogger.info(`Successfully read local ${configFile} file.`);
+    const ssmParameterName = lambdaConfig.parameterName;
 
-    // Get the predefined policy which references the SSM Parameter we need to pull
-    rootLogger.info(`Fetching Policy[${POLICY_NAME}] from IAM Role[${iamRole}].`);
-    const { PolicyDocument } = await iamClient.send(new GetRolePolicyCommand({ PolicyName: POLICY_NAME, RoleName: iamRoleName }));
-    rootLogger.info('Successfully fetched Policy document.');
-
-    const parsedPolicyDoc = decodeURIComponent(PolicyDocument);
-    const referencedPolicy = JSON.parse(parsedPolicyDoc);
-    const ssmParameterArn = referencedPolicy.Statement[0].Resource;
-    rootLogger.info(`Found SSM Resource[${ssmParameterArn}].`);
-    const ssmParameterName = `/${getResourceNameFromARN(ssmParameterArn, 'parameter')}`;
-    
     // Fetch the data from parameter store
     rootLogger.info(`Fetching Parameter[${ssmParameterName}].`);
     const { Parameter } = await ssmClient.send(new GetParameterCommand({ Name: ssmParameterName, WithDecryption: true }));
