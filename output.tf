@@ -8,7 +8,7 @@ output "arn" {
   value       = aws_lambda_function.cloudfront_auth_edge.arn
 }
 
-output "name" {
+output "function_name" {
   description = "Name of the Lambda@Edge created by this module."
   value       = aws_lambda_function.cloudfront_auth_edge.function_name
 }
