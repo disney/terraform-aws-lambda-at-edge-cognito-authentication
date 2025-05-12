@@ -39,6 +39,22 @@ variable "lambda_timeout" {
   default     = 5
 }
 
+variable "lambda_config_mode" {
+  description = "Which strategy to use to supply config to the lambda function, defaults to 'dynamic'."
+  type        = string
+  default     = "dynamic"
+  validation {
+    condition     = contains(["dynamic", "hybrid", "static"], var.lambda_config_mode)
+    error_message = "Input var.lambda_config_mode must be one of \"dynamic\", \"hybrid\", \"static\"."
+  }
+}
+
+variable "lambda_config_allow_insecure_secret_storage" {
+  description = "Allow secrets to be stored in the lambda config file, defaults to false."
+  type        = bool
+  default     = false
+}
+
 # ================================================================================================================
 # Cognito @ Edge Configurations
 # ================================================================================================================
@@ -111,4 +127,3 @@ variable "cognito_additional_settings" {
   type        = any
   default     = {}
 }
-
