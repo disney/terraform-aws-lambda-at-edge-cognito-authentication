@@ -10,7 +10,7 @@
   "license": "TOST",
   "devDependencies": {
     "@aws-sdk/client-iam": "3.787.0",
-    "@aws-sdk/client-ssm": "3.787.0",
+    "@aws-sdk/client-ssm": "3.825.0",
     "@aws-sdk/client-sts": "3.787.0",
     "esbuild": "0.25.2",
     "patch-package": "8.0.0"
