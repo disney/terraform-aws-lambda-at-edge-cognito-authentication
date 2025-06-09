@@ -9,7 +9,7 @@
   "author": "Ken Figueiredo",
   "license": "TOST",
   "devDependencies": {
-    "@aws-sdk/client-iam": "3.787.0",
+    "@aws-sdk/client-iam": "3.826.0",
     "@aws-sdk/client-ssm": "3.787.0",
     "@aws-sdk/client-sts": "3.787.0",
     "esbuild": "0.25.2",
