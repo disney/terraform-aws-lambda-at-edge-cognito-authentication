@@ -1,5 +1,110 @@
-formattter: markdown
+formatter: "markdown table"
+
+version: ""
+
+header-from: main.tf
+footer-from: ""
+
+recursive:
+  enabled: false
+  path: modules
+
+sections:
+  hide: []
+  show: []
+
+content: |-
+  {{ .Header }}
+
+  ## Usage
+
+  ```hcl
+  module "lambda_edge_auth" {
+    source = "github.com/shashax42/terraform-aws-lambda-at-edge-cognito-authentication"
+
+    name                = "my-app"
+    cognito_user_pool   = "us-east-1_XXXXXXXXX"
+    cognito_client_id   = "xxxxxxxxxxxxxxxxxxxxxxxxxx"
+    
+    # Optional: Enhanced monitoring
+    enable_enhanced_monitoring = true
+    alarm_notification_emails  = ["admin@example.com"]
+    
+    tags = {
+      Environment = "production"
+      Project     = "my-project"
+    }
+  }
+  ```
+
+  ## Features
+
+  - **Lambda@Edge Authentication**: Seamless Cognito authentication at CloudFront edge locations
+  - **Multiple Configuration Modes**: Dynamic, hybrid, and static configuration options
+  - **Enhanced Security**: Built-in security best practices and monitoring
+  - **Comprehensive Monitoring**: CloudWatch dashboards, alarms, and log analysis
+  - **Cost Optimization**: Efficient caching and minimal cold starts
+
+  ## Architecture
+
+  This module creates a Lambda@Edge function that intercepts CloudFront requests and validates authentication through AWS Cognito User Pools. The function runs at edge locations for optimal performance.
+
+  {{ .Requirements }}
+
+  {{ .Providers }}
+
+  {{ .Modules }}
+
+  {{ .Resources }}
+
+  {{ .Inputs }}
+
+  {{ .Outputs }}
+
+  ## Security Considerations
+
+  - All sensitive configuration is stored in AWS Systems Manager Parameter Store with encryption
+  - KMS keys are used for additional encryption layers
+  - IAM roles follow the principle of least privilege
+  - CloudWatch logging is enabled for audit trails
+
+  ## Contributing
+
+  Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+  ## License
+
+  This project is licensed under the TOST License - see the [LICENSE](LICENSE) file for details.
+
+  {{ .Footer }}
+
+output:
+  file: "README.md"
+  mode: inject
+  template: |-
+    <!-- BEGIN_TF_DOCS -->
+    {{ .Content }}
+    <!-- END_TF_DOCS -->
+
+output-values:
+  enabled: false
+  from: ""
 
 sort:
   enabled: true
   by: name
+
+settings:
+  anchor: true
+  color: true
+  default: true
+  description: false
+  escape: true
+  hide-empty: false
+  html: true
+  indent: 2
+  lockfile: true
+  read-comments: true
+  required: true
+  sensitive: true
+  type: true

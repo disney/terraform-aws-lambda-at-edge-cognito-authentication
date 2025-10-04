@@ -1,23 +1,40 @@
 {
   "name": "auth_lambda",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Cognito@Edge wrapper to clean up",
   "main": "index.js",
   "scripts": {
-    "postinstall": "esbuild index.js --bundle --minify --platform=node  --target=node20 --format=cjs --main-fields=module,main \"--external:@aws-sdk/*\" --outdir=dist"
+    "postinstall": "esbuild index.js --bundle --minify --platform=node --target=node20 --format=cjs --main-fields=module,main \"--external:@aws-sdk/*\" --outdir=dist",
+    "build": "esbuild index.js --bundle --minify --platform=node --target=node20 --format=cjs --main-fields=module,main \"--external:@aws-sdk/*\" --outdir=dist",
+    "audit-fix": "npm audit fix",
+    "security-check": "npm audit --audit-level high",
+    "clean": "rimraf node_modules package-lock.json",
+    "clean-win": "if exist package-lock.json del package-lock.json && if exist node_modules rmdir /s /q node_modules",
+    "fresh-install": "npm run clean && npm install",
+    "fresh-install-win": "npm run clean-win && npm install"
   },
   "author": "Ken Figueiredo",
   "license": "TOST",
   "devDependencies": {
-    "@aws-sdk/client-iam": "3.787.0",
-    "@aws-sdk/client-ssm": "3.787.0",
-    "@aws-sdk/client-sts": "3.787.0",
-    "esbuild": "0.25.2",
-    "patch-package": "8.0.0"
+    "@aws-sdk/client-iam": "^3.850.0",
+    "@aws-sdk/client-ssm": "^3.850.0",
+    "@aws-sdk/client-sts": "^3.850.0",
+    "esbuild": "^0.25.10",
+    "patch-package": "^8.0.0"
   },
   "dependencies": {
-    "cognito-at-edge": "1.5.3",
-    "node-cache": "5.1.2",
-    "pino": "9.6.0"
+    "cognito-at-edge": "^1.5.3",
+    "node-cache": "^5.1.2",
+    "pino": "^9.5.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "overrides": {
+    "semver": ">=7.5.2",
+    "word-wrap": ">=1.2.4",
+    "fast-xml-parser": ">=4.4.1",
+    "braces": ">=3.0.3",
+    "micromatch": ">=4.0.8"
   }
 }

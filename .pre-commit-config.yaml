@@ -6,17 +6,75 @@
   --hook-config=--path-to-file=README.md
 
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-json
+      - id: pretty-format-json
+        args: ['--autofix']
+      - id: mixed-line-ending
+
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.76.0
+    rev: v1.88.4
     hooks:
       - id: terraform_fmt
         args:
           - --args=-recursive
+
+      - id: terraform_validate
+        args:
+          - --args=-json
+          - --hook-config=--retry-once-with-cleanup=true
 
       - id: terraform_docs
         files: '^.*.tf$'
         args:
           - *common_tf_docs_readme_file
           - *common_tf_docs_config
-          - --hook-config=--config=data-io/modules/data-io-regional/.terraform-docs.yml
+          - --hook-config=--config=.terraform-docs.yml
 
+      - id: terraform_tflint
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+
+      - id: terraform_checkov
+        args:
+          - --args=--quiet
+          - --args=--framework=terraform
+
+      - id: terraform_tfsec
+        args:
+          - --args=--format=compact
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.57.0
+    hooks:
+      - id: eslint
+        files: 'files/deployable/.*\.(js|ts)$'
+        additional_dependencies:
+          - eslint@8.57.0
+          - eslint-config-standard@17.1.0
+          - eslint-plugin-import@2.29.1
+          - eslint-plugin-n@16.6.2
+          - eslint-plugin-promise@6.1.1
+
+  - repo: local
+    hooks:
+      - id: npm-audit
+        name: npm audit
+        entry: bash -c 'cd files/deployable && npm audit --audit-level high'
+        language: system
+        files: 'files/deployable/package.*\.json$'
+        pass_filenames: false
