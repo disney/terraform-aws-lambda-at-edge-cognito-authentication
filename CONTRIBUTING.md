@@ -64,7 +64,7 @@ terraform init -backend=false
 terraform validate
 ```
 
-If your changes to the terraform module are invalid, the validate call will note where those invalid issue are.
+If your changes to the terraform module are invalid, the validate call will note where those invalid issues are.
 
 ---
 
@@ -76,7 +76,7 @@ to your fork, and reference them within your Terraform Deployment like so:
 module "cognito_auth" {
   source = "git::https://github.com/<my fork>/terraform-aws-lambda-at-edge-cognito-authentication.git?ref=<my_version_ref>"
  
-  name                                      = "my_foo_app""
+  name                                      = "my_foo_app"
   cognito_user_pool_name                    = data.aws_cognito_user_pools.my_user_pool.name
   cognito_user_pool_region                  = "us-east-1"
   cognito_user_pool_id                      = aws_cognito_user_pool_client.my_user_pool_client.user_pool_id
